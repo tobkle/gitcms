@@ -9,7 +9,7 @@ const HomePage: NextComponentType<NextPageContext, Props, Props> = (
   props: Props
 ) => {
   const { content } = props;
-  return <>HomePage</>;
+  return <div className="text-indigo-500">HomePage</div>;
 };
 
 export default HomePage;
