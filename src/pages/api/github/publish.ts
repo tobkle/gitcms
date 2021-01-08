@@ -1,15 +1,24 @@
+import { NextApiRequest, NextApiResponse } from 'next';
 import { Octokit } from '@octokit/rest';
 import { OctokitResponse } from '@octokit/types';
+import getAuthenticatedUser from 'lib/get-authenticated-user';
 
 const octokit = new Octokit({
   auth: process.env.GITHUB_PERSONAL_ACCESS_TOKEN,
   baseUrl: 'https://api.github.com',
 });
 
-export default async (req, res) => {
+interface ApiResponse {
+  success: boolean;
+  message: string | undefined;
+}
+
+export default async (
+  req: NextApiRequest,
+  res: NextApiResponse
+): Promise<ApiResponse | void> => {
   try {
-    // const cookies = req.cookies
-    // const headers = req.headers
+    const user = await getAuthenticatedUser(req, res);
     const body = req.body;
     const githubUser = process.env.GITHUB_USER;
     const githubRepo = process.env.GITHUB_REPO;
@@ -57,7 +66,7 @@ export default async (req, res) => {
       repo: githubRepo,
       path: githubFilename,
       sha: SHAofPreviousFileVersion,
-      message: 'updated',
+      message: `updated by ${user.name}`,
       content: base64EncodedContent,
     });
 

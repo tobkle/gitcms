@@ -1,6 +1,6 @@
 import { NextComponentType, NextPageContext } from 'next';
 import Header from 'components/header';
-import Post from 'components/post';
+import { SiteCreate, SiteList } from 'components/sites';
 import { HomeAttributes } from 'interfaces/home';
 
 interface Props {
@@ -14,7 +14,8 @@ const HomePage: NextComponentType<NextPageContext, Props, Props> = (
   return (
     <div className="text-indigo-500">
       <Header />
-      <Post />
+      <SiteList />
+      <SiteCreate />
     </div>
   );
 };

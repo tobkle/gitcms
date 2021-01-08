@@ -35,4 +35,12 @@ export default (
       secret: process.env.JWT_SECRET,
     },
     adapter: Adapters.Prisma.Adapter({ prisma }),
+    // callbacks: {
+    //   session: async (session, user) => {
+    //     return Promise.resolve(session);
+    //   },
+    //   jwt: async (token, user, account, profile, isNewUser) => {
+    //     return Promise.resolve(token);
+    //   },
+    // },
   });

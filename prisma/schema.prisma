@@ -36,7 +36,15 @@ model Session {
   createdAt    DateTime @default(now()) @map(name: "created_at")
   updatedAt    DateTime @default(now()) @map(name: "updated_at")
 
+  @@index([accessToken], name: "sessionAccessToken")
+
   @@map(name: "sessions")
+}
+
+enum Role {
+  USER
+  EDITOR
+  ADMIN
 }
 
 model User {
@@ -47,6 +55,9 @@ model User {
   image         String?
   createdAt     DateTime  @default(now()) @map(name: "created_at")
   updatedAt     DateTime  @default(now()) @map(name: "updated_at")
+  role          Role      @default(USER)
+  owns          Site[]
+  maintains     Maintainer[]
 
   @@map(name: "users")
 }
@@ -62,13 +73,38 @@ model VerificationRequest {
   @@map(name: "verification_requests")
 }
 
+enum Status {
+  CREATED
+  LIVE
+}
+
 model Site {
   id         Int       @default(autoincrement()) @id
   name       String   
-  url        String    @unique
-  ownerId     Int      @map(name: "owner_id")
+  url        String    
+  owner      User      @relation(fields: [ownerId], references: [id])
+  ownerId    Int       @map(name: "owner_id")
+  repository String    @unique
+  status     Status    @default(CREATED)
+  createdAt  DateTime  @default(now()) @map(name: "created_at")
+  updatedAt  DateTime  @default(now()) @map(name: "updated_at")
+  maintainers Maintainer[]
+
+  @@map(name: "sites")
+}
+
+model Maintainer {
+  site       Site      @relation(fields: [siteId], references: [id])
+  siteId     Int       @map(name: "site_id")
+  user       User      @relation(fields: [userId], references: [id])
+  userId     Int       @map(name: "user_id")
+  role       Role      @default(EDITOR)
   createdAt  DateTime  @default(now()) @map(name: "created_at")
   updatedAt  DateTime  @default(now()) @map(name: "updated_at")
 
-  @@map(name: "sites")
+  @@unique([siteId, userId])
+  @@index([siteId], name: "maintainerSiteId")
+  @@index([userId], name: "maintainerUserId")
+
+  @@map(name: "maintainers")
 }

@@ -1,8 +1,10 @@
+import { useSession } from 'hooks/use-session';
 import { useState, useEffect } from 'react';
 import { useMutation } from 'react-query';
 import { getSlug } from 'lib/helpers';
 
 export default function Post(): JSX.Element {
+  const [session, loading] = useSession();
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
   const [slug, setSlug] = useState(getSlug(title));
@@ -37,15 +39,10 @@ export default function Post(): JSX.Element {
     mutate({ title, content, slug, path: 'posts', suffix: '.yml' });
   };
 
-  {
-    isLoading && <div>Loading...</div>;
-  }
-  {
-    isError && <div>{error}</div>;
-  }
-  {
-    isSuccess && <div>Article is saved</div>;
-  }
+  if (loading || isLoading) return <div>Loading...</div>;
+  if (!session) return <div></div>;
+  if (isError) return <div>{error}</div>;
+  if (isSuccess) <div>Article is saved</div>;
 
   return (
     <form className="mx-auto max-w-2xl" onSubmit={onSubmit}>
