@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "baseUrl": "../src",
+    "baseUrl": "../src/",
     "target": "es5",
     "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
@@ -13,22 +13,15 @@
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "jsx": "preserve",
-    "paths": {
-      "@lib/*": ["../src/lib/*"],
-      "@assets/*": ["../src/assets/*"],
-      "@components/*": ["../src/components/*"],
-      "@utils/*": ["../src/utils/*"],
-      "@config/*": ["../src/config/*"]
-    }
+    "jsx": "preserve"
   },
   "include": [
     "../types.d.ts",
     "../next-env.d.ts",
-    "../**/*.stories.js",
-    "../**/*.stories.ts",
-    "../**/*.stories.tsx",
-    "../**/*.stories.mdx"
+    "../src/**/*.stories.js",
+    "../src/**/*.stories.ts",
+    "../src/**/*.stories.tsx",
+    "../src/**/*.stories.mdx"
   ],
   "exclude": ["node_modules"]
 }

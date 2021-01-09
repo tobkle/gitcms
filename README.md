@@ -8,3 +8,4 @@ A CMS based directly on Github
 - Next.JS
 - TailwindCSS
 - Tailwind Typography
+- Storybook

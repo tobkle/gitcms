@@ -1,8 +1,8 @@
 .root {
-  @apply inline-flex text-center items-center leading-7;
+  @apply text-black inline-flex text-center items-center leading-7;
 
   & span {
-    @apply bg-accents-6 rounded-full h-2 w-2;
+    @apply rounded-full h-2 w-2;
 
     animation-name: blink;
     animation-duration: 1.4s;

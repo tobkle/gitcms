@@ -1,5 +1,5 @@
 // eslint-disable-next-line
-const colors = require('tailwindcss/colors');
+const colors = require('tailwindcss/colors')
 
 module.exports = {
   purge: [],
@@ -16,18 +16,21 @@ module.exports = {
     colors: {
       transparent: 'transparent',
       current: 'currentColor',
-
-      black: colors.black,
-      white: colors.white,
-      gray: colors.coolGray,
-      red: colors.red,
-      yellow: colors.amber,
-      green: colors.emerald,
-      blue: colors.blue,
-      indigo: colors.indigo,
-      purple: colors.violet,
-      pink: colors.pink,
+      primary: colors.indigo,
+      secondary: colors.amber,
+      ...colors,
+      // black: colors.black,
+      // white: colors.white,
+      // gray: colors.coolGray,
+      // red: colors.red,
+      // yellow: colors.amber,
+      // green: colors.emerald,
+      // blue: colors.blue,
+      // indigo: colors.indigo,
+      // purple: colors.violet,
+      // pink: colors.pink,
       'royal-blue': {
+        50: '#f8fafc',
         100: '#F0F1FC',
         200: '#D9DCF9',
         300: '#C2C7F5',
@@ -932,4 +935,4 @@ module.exports = {
     require('@tailwindcss/typography'),
     require('tailwindcss-children'),
   ],
-};
+}
