@@ -1,23 +1,7 @@
-import { NextComponentType, NextPageContext } from 'next';
-import Header from 'components/header';
-import { SiteCreate, SiteList } from 'components/sites';
-import { HomeAttributes } from 'interfaces/home';
+import React from 'react'
 
-interface Props {
-  content: { attributes: HomeAttributes };
+const IndexPage: React.FC = () => {
+  return <div>Homepage</div>
 }
 
-const HomePage: NextComponentType<NextPageContext, Props, Props> = (
-  props: Props
-) => {
-  const { content } = props;
-  return (
-    <div className="text-indigo-500">
-      <Header />
-      <SiteList />
-      <SiteCreate />
-    </div>
-  );
-};
-
-export default HomePage;
+export default IndexPage

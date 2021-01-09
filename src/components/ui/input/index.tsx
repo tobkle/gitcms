@@ -1,6 +1,6 @@
-import React from 'react';
-import cn from 'classnames';
-import type { FieldElement, FieldError, FieldName, Ref } from 'react-hook-form';
+import React from 'react'
+import cn from '@components/ui/input/Button/node_modules/classnames'
+import type { FieldElement, FieldError, FieldName, Ref } from 'react-hook-form'
 
 export default function InputField({
   name,
@@ -8,10 +8,10 @@ export default function InputField({
   errors,
   register,
 }: {
-  name: HTMLInputElement;
-  label: string;
-  errors: FieldError | undefined;
-  register: Ref;
+  name: HTMLInputElement
+  label: string
+  errors: FieldError | undefined
+  register: Ref
 }): JSX.Element {
   return (
     <div className="col-span-12 mb-4">
@@ -40,5 +40,5 @@ export default function InputField({
 
       {errors[name] && <div className="text-red-500">{label} is required</div>}
     </div>
-  );
+  )
 }

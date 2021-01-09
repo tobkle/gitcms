@@ -1,18 +1,18 @@
-import React from 'react';
-import { useSession } from 'hooks/use-session';
-import { useSWR } from 'hooks/use-swr';
-import fetcher from 'lib/fetch';
-import { Site } from '@prisma/client';
-import Link from 'next/link';
+import React from 'react'
+import { useSession } from 'hooks/use-session'
+import { useSWR } from 'hooks/use-swr'
+import fetcher from 'lib/fetch'
+import { Site } from '@prisma/client'
+import Link from 'next/link'
 
 const SiteList = (): JSX.Element => {
-  const [session, loading] = useSession();
-  const { data, error } = useSWR<Site[]>('/api/site', fetcher);
+  const [session, loading] = useSession()
+  const { data, error } = useSWR<Site[]>('/api/site', fetcher)
 
-  if (loading) return <div>Loading...</div>;
-  if (!session) return <div></div>;
-  if (error) return <div>failed to load</div>;
-  if (!data) return <div>Loading...</div>;
+  if (loading) return <div>Loading...</div>
+  if (!session) return <div></div>
+  if (error) return <div>failed to load</div>
+  if (!data) return <div>Loading...</div>
 
   return (
     <div className="mx-auto max-w-2xl mb-8">
@@ -23,10 +23,10 @@ const SiteList = (): JSX.Element => {
             <div key={site.id}>
               <Link href={`/site/${site.id}`}>{site.name}</Link>
             </div>
-          );
+          )
         })}
     </div>
-  );
-};
+  )
+}
 
-export default SiteList;
+export default SiteList

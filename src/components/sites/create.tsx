@@ -1,18 +1,18 @@
-import React from 'react';
-import cn from 'classnames';
-import { useForm } from 'react-hook-form';
-import { useSWR } from 'hooks/use-swr';
-import fetcher from 'lib/fetch';
-import { useSession } from 'hooks/use-session';
-import { yupResolver } from '@hookform/resolvers/dist/umd';
-import * as yup from 'yup';
-import { Site } from '@prisma/client';
+import React from 'react'
+import cn from 'classnames'
+import { useForm } from 'react-hook-form'
+import { useSWR } from 'hooks/use-swr'
+import fetcher from 'lib/fetch'
+import { useSession } from 'hooks/use-session'
+import { yupResolver } from '@hookform/resolvers/dist/umd'
+import * as yup from 'yup'
+import Input from 'components/elements/input'
 
-type FormData = {
-  name: string;
-  url: string;
-  repository: string;
-};
+type FormObject = {
+  name: string
+  url: string
+  repository: string
+}
 
 const schema = yup.object().shape({
   name: yup.string().required(),
@@ -23,34 +23,23 @@ const schema = yup.object().shape({
     .lowercase()
     .matches(/[A-Za-z0-9_.-]+\/[A-Za-z0-9_.-]+/)
     .required(),
-  // .test('repository-exists', 'repository already exists', async function (repository) {
-  //   try {
-  //     await fetch('/api/github/repoexists', {
-  //       method: 'GET',
-  //       headers: {
-  //         'Content-Type': 'application/json',
-  //       },
-  //       body: JSON.stringify({ repository }),
-  //       credentials: 'include',
-  //     });
-  //     return false;
-  //   } catch (error) {
-  //     console.log('repository', repository, 'not existing => true (so we can create it)');
-  //     return true;
-  //   }
-  // }),
-});
+})
 
-const CreateSite = (): JSX.Element => {
-  const [session, loading] = useSession();
-  const { register, handleSubmit, errors } = useForm<FormData>({
+const CreateSite: React.FC = (): JSX.Element => {
+  const [session, loading] = useSession()
+  const { register, handleSubmit, errors } = useForm<FormObject>({
+    defaultValues: {
+      url: '',
+      name: '',
+      repository: '',
+    },
     resolver: yupResolver(schema),
-  });
-  const { mutate } = useSWR('/api/site');
+  })
+  const { mutate } = useSWR('/api/site')
 
   const onSubmit = async ({ name, url, repository }) => {
     try {
-      console.log(name, url, repository);
+      console.log(name, url, repository)
       const response = await fetcher('/api/site/create', {
         method: 'POST',
         headers: {
@@ -59,18 +48,18 @@ const CreateSite = (): JSX.Element => {
         },
         body: JSON.stringify({ name, url, repository }),
         credentials: 'include',
-      });
-      console.log('response', response);
-      const site = await response.json();
-      console.log('site', site);
-      mutate(site);
+      })
+      console.log('response', response)
+      const site = await response.json()
+      console.log('site', site)
+      mutate(site)
     } catch (error) {
-      console.error('Error', error.message);
+      console.error('Error', error.message)
     }
-  };
+  }
 
-  if (loading) return <div>Loading...</div>;
-  if (!session) return <div></div>;
+  if (loading) return <div>Loading...</div>
+  if (!session) return <div></div>
 
   return (
     <div className="mx-auto max-w-2xl bg-white mb-8 p-8 border-2 border-indigo-500 rounded-md shadow-lg">
@@ -80,7 +69,15 @@ const CreateSite = (): JSX.Element => {
 
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="mt-6 grid grid-cols-12 gap-6">
-          <div className="col-span-12">
+          {/* <Input
+            name="name"
+            label="Name"
+            type="text"
+            register={register({ required: true })}
+            errors={errors}
+          /> */}
+
+          {/* <div className="col-span-12">
             <label
               className="block text-sm font-medium text-gray-700"
               htmlFor="name"
@@ -105,7 +102,7 @@ const CreateSite = (): JSX.Element => {
             {errors.name && (
               <div className="text-red-500 text-sm">{errors.name?.message}</div>
             )}
-          </div>
+          </div> */}
 
           <div className="col-span-12">
             <label
@@ -176,7 +173,7 @@ const CreateSite = (): JSX.Element => {
         </button>
       </form>
     </div>
-  );
-};
+  )
+}
 
-export default CreateSite;
+export default CreateSite

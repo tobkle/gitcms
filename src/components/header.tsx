@@ -1,10 +1,11 @@
-import { signIn, signOut, useSession } from 'next-auth/client';
-import Link from 'next/link';
+import { signIn, signOut, useSession } from 'next-auth/client'
+import Link from 'next/link'
+import Menu from 'components/menu'
 
 export default function Header(): JSX.Element {
-  const [session, loading] = useSession();
+  const [session, loading] = useSession()
 
-  if (loading) return <p>Loading...</p>;
+  if (loading) return <p>Loading...</p>
 
   return (
     <header className="max-w-4xl mx-auto flex flex-row justify-between items-center content-center">
@@ -19,11 +20,7 @@ export default function Header(): JSX.Element {
       ) : (
         <span className="flex w-64 items-center justify-between">
           <span className="flex items-center text-center">
-            <nav>
-              <span>
-                <Link href="/admin/article">Admin</Link>
-              </span>
-            </nav>
+            <Menu />
             {session.user.name}
           </span>
           {session.user.image ? (
@@ -39,5 +36,5 @@ export default function Header(): JSX.Element {
         </span>
       )}
     </header>
-  );
+  )
 }
