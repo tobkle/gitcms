@@ -1,3 +1,5 @@
+import React from 'react'
+
 const Spinner = (props: React.SVGProps<SVGSVGElement>): JSX.Element => {
   return (
     <svg viewBox="0 0 100 100" {...props}>
