@@ -1,2 +1,20 @@
-import { PrismaClient } from '@prisma/client';
-export default new PrismaClient();
+import { PrismaClient } from '@prisma/client'
+
+// Singleton
+class DBClient {
+  public prisma: PrismaClient
+  private static instance: DBClient
+
+  private constructor() {
+    this.prisma = new PrismaClient()
+  }
+
+  public static getInstance = () => {
+    if (!DBClient.instance) {
+      DBClient.instance = new DBClient()
+    }
+    return DBClient.instance
+  }
+}
+
+export default DBClient.getInstance().prisma

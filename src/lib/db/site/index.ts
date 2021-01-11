@@ -1,5 +1,5 @@
-import db from '../';
-import { User, Site, Prisma } from '@prisma/client';
+import db from '../'
+import { User, Site, Prisma } from '@prisma/client'
 
 const create = async ({
   owner,
@@ -8,7 +8,7 @@ const create = async ({
   repository,
 }: Prisma.SiteCreateInput): Promise<Site> => {
   if (!owner || !name || !url || !repository)
-    throw new Error('Please provide valid input for create (site).');
+    throw new Error('Please provide valid input for create (site).')
 
   const site = await db.site.create({
     data: {
@@ -17,24 +17,25 @@ const create = async ({
       url,
       repository,
     },
-  });
+  })
 
-  return site;
-};
+  return site
+}
 
 const getAll = async (): Promise<Site[]> => {
-  const sites = await db.site.findMany();
-  return sites;
-};
+  const sites = await db.site.findMany()
+  return sites
+}
 
 const getAllForOwnerMaintainer = async (user: User): Promise<Site[]> => {
-  const ownedSites = await db.site.findMany({
+  // add all the sites the signed in user owns
+  const sites = await db.site.findMany({
     where: {
       ownerId: Number(user.id),
     },
-  });
-  console.log('ownedSites:', ownedSites);
+  })
 
+  // add all the sites, the user is invited as an editor (= maintainer)
   const maintainedSites = await db.maintainer.findMany({
     include: {
       site: true,
@@ -42,32 +43,74 @@ const getAllForOwnerMaintainer = async (user: User): Promise<Site[]> => {
     where: {
       userId: user.id,
     },
-  });
+  })
 
-  console.log('maintainedSites:', maintainedSites);
+  maintainedSites.map((site) => {
+    sites.push(site.site)
+  })
 
-  const concatenatedSites = ownedSites; //.concat();
-  console.log('concatenatedSites:', concatenatedSites);
+  // don't send duplicate sites
+  const distinctSites = []
+  sites.map((s) =>
+    distinctSites.filter((d) => d.id == s.id).length > 0
+      ? null
+      : distinctSites.push(s)
+  )
 
-  return concatenatedSites;
-};
+  return distinctSites
+}
 
-const get = async (id): Promise<Site> => {
+const get = async (id: number): Promise<Site> => {
   const site = await db.site.findUnique({
     where: {
       id: Number(id),
     },
-  });
-  return site;
-};
+  })
+  console.log('Site get:', site)
+  return site
+}
+
+const update = async (id: number, updated: Site): Promise<Site> => {
+  const site = await db.site.update({
+    data: {
+      name: updated.name,
+      url: updated.url,
+      repository: updated.repository,
+      status: updated.status,
+    },
+    where: {
+      id: id,
+    },
+  })
+  console.log('Site updated:', site)
+  return site
+}
+
+const remove = async (id: number): Promise<Site> => {
+  const site = await db.site.findUnique({
+    where: {
+      id: Number(id),
+    },
+  })
+
+  await db.site.delete({
+    where: {
+      id: Number(id),
+    },
+  })
+  console.log('Site deleted:', site)
+  return site
+}
 
 const site = {
   get,
   getAll,
   getAllForOwnerMaintainer,
   create,
-};
-export default site;
+  update,
+  remove,
+}
+export default site
 
 /*
 export  async function handle(req, res) {

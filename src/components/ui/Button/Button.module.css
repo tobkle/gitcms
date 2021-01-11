@@ -1,5 +1,5 @@
 .root {
-  @apply inline-flex text-center items-center border border-transparent shadow-sm font-medium rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2;
+  @apply inline-flex items-center place-items-center border border-transparent shadow-sm font-medium rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2;
 }
 
 .primary {
@@ -15,7 +15,7 @@
 }
 
 .white {
-  @apply text-gray-900 bg-white hover:bg-gray-200 focus:ring-gray-200 border border-2 border-gray-200;
+  @apply text-gray-900 bg-white hover:bg-gray-200 focus:ring-gray-200 border-2 border-gray-200;
 }
 
 .round {
@@ -58,6 +58,10 @@
   @apply p-3;
 }
 
+.inputBlock {
+  @apply col-span-12;
+}
+
 .loading {
   @apply cursor-not-allowed;
 }
@@ -66,7 +70,7 @@
 .disabled:hover {
   @apply cursor-not-allowed;
 
-  filter: grayscale(1);
+  filter: grayscale(0.8) opacity(50%);
   -webkit-transform: translateZ(0);
   -webkit-perspective: 1000;
   -webkit-backface-visibility: hidden;

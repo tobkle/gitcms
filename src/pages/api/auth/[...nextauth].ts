@@ -1,11 +1,11 @@
-import { NextApiRequest, NextApiResponse } from 'next';
-import NextAuth from 'next-auth';
-import Providers from 'next-auth/providers';
-import Adapters from 'next-auth/adapters';
-import { PrismaClient } from '@prisma/client';
-import { sendVerificationRequest } from 'lib/emails/verification-emails';
+import { NextApiRequest, NextApiResponse } from 'next'
+import NextAuth from 'next-auth'
+import Providers from 'next-auth/providers'
+import Adapters from 'next-auth/adapters'
+import { PrismaClient } from '@prisma/client'
+import { sendVerificationRequest } from 'lib/emails/verification-emails'
 
-const prisma = new PrismaClient();
+const prisma = new PrismaClient()
 
 export default (
   req: NextApiRequest,
@@ -43,4 +43,4 @@ export default (
     //     return Promise.resolve(token);
     //   },
     // },
-  });
+  })

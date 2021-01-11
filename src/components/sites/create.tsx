@@ -1,12 +1,16 @@
 import React from 'react'
-import cn from 'classnames'
+import { GetStaticProps } from 'next'
 import { useForm } from 'react-hook-form'
-import { useSWR } from 'hooks/use-swr'
-import fetcher from 'lib/fetch'
+import useSWR, { mutate } from 'swr'
+import fetcher, { post } from 'lib/fetch'
 import { useSession } from 'hooks/use-session'
 import { yupResolver } from '@hookform/resolvers/dist/umd'
 import * as yup from 'yup'
-import Input from 'components/elements/input'
+import Form from 'components/ui/Form'
+import Input from 'components/ui/Input'
+import Button from 'components/ui/Button'
+import { Site } from '@prisma/client'
+import { URL_SITE_CREATE, URL_SITE_LIST } from 'config/url'
 
 type FormObject = {
   name: string
@@ -25,8 +29,18 @@ const schema = yup.object().shape({
     .required(),
 })
 
-const CreateSite: React.FC = (): JSX.Element => {
+interface CreateSiteProps {
+  sites: Site[]
+}
+
+const CreateSite: React.FC<CreateSiteProps> = (props): JSX.Element => {
+  const { sites } = props
   const [session, loading] = useSession()
+
+  const { data } = useSWR(URL_SITE_LIST, fetcher, {
+    initialData: sites,
+  })
+
   const { register, handleSubmit, errors } = useForm<FormObject>({
     defaultValues: {
       url: '',
@@ -35,24 +49,15 @@ const CreateSite: React.FC = (): JSX.Element => {
     },
     resolver: yupResolver(schema),
   })
-  const { mutate } = useSWR('/api/site')
 
   const onSubmit = async ({ name, url, repository }) => {
     try {
-      console.log(name, url, repository)
-      const response = await fetcher('/api/site/create', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          accept: 'application/json',
-        },
-        body: JSON.stringify({ name, url, repository }),
-        credentials: 'include',
+      const createdSite = await post(URL_SITE_CREATE, {
+        name,
+        url,
+        repository,
       })
-      console.log('response', response)
-      const site = await response.json()
-      console.log('site', site)
-      mutate(site)
+      mutate(URL_SITE_LIST, [...data, createdSite], false)
     } catch (error) {
       console.error('Error', error.message)
     }
@@ -62,118 +67,49 @@ const CreateSite: React.FC = (): JSX.Element => {
   if (!session) return <div></div>
 
   return (
-    <div className="mx-auto max-w-2xl bg-white mb-8 p-8 border-2 border-indigo-500 rounded-md shadow-lg">
-      <h1 className="text-2xl text-indigo-600 font-bold mb-4">
-        Create new Site
-      </h1>
+    <Form h1="Create new Site" onSubmit={handleSubmit(onSubmit)}>
+      <Input
+        name="name"
+        label="Name"
+        type="text"
+        ref={register({ required: true })}
+        errors={errors['name']}
+        placeholder="Site Name..."
+      />
 
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <div className="mt-6 grid grid-cols-12 gap-6">
-          {/* <Input
-            name="name"
-            label="Name"
-            type="text"
-            register={register({ required: true })}
-            errors={errors}
-          /> */}
+      <Input
+        name="url"
+        label="Url"
+        type="text"
+        ref={register({ required: true })}
+        errors={errors['url']}
+        placeholder="Site Url..."
+      />
 
-          {/* <div className="col-span-12">
-            <label
-              className="block text-sm font-medium text-gray-700"
-              htmlFor="name"
-            >
-              Name
-            </label>
-            <input
-              className={cn(
-                'mt-1 block w-full border rounded-md shadow-sm py-2 px-3 focus:outline-none sm:text-sm',
-                {
-                  'border-gray-300 focus:ring-light-blue-500 focus:border-light-blue-500': !errors.name,
-                  'border-red-300 focus:ring-red-500 focus:border-red-500': !!errors.name,
-                }
-              )}
-              id="name"
-              type="text"
-              name="name"
-              defaultValue="Website klemmer.info"
-              ref={register({ required: true })}
-              placeholder="Site name"
-            />
-            {errors.name && (
-              <div className="text-red-500 text-sm">{errors.name?.message}</div>
-            )}
-          </div> */}
+      <Input
+        name="repository"
+        label="Github Repository"
+        type="text"
+        ref={register({ required: true })}
+        errors={errors['repository']}
+        placeholder="maintainer/repository-name"
+      />
 
-          <div className="col-span-12">
-            <label
-              className="block text-sm font-medium text-gray-700"
-              htmlFor="url"
-            >
-              Url
-            </label>
-            <input
-              className={cn(
-                'mt-1 block w-full border rounded-md shadow-sm py-2 px-3 focus:outline-none sm:text-sm',
-                {
-                  'border-gray-300 focus:ring-light-blue-500 focus:border-light-blue-500': !errors.url,
-                  'border-red-300 focus:ring-red-500 focus:border-red-500': !!errors.url,
-                }
-              )}
-              id="url"
-              type="text"
-              name="url"
-              defaultValue="https://www.klemmer.info"
-              ref={register({ required: true })}
-              placeholder="Site Url"
-            />
-            {errors.url && (
-              <div className="text-red-500 text-sm">{errors.url?.message}</div>
-            )}
-          </div>
-
-          <div className="col-span-12">
-            <label
-              className="block text-sm font-medium text-gray-700"
-              htmlFor="repository"
-            >
-              Github Repository
-            </label>
-            <input
-              className={cn(
-                'mt-1 block w-full border rounded-md shadow-sm py-2 px-3 focus:outline-none sm:text-sm',
-                {
-                  'border-gray-300 focus:ring-light-blue-500 focus:border-light-blue-500': !errors.repository,
-                  'border-red-300 focus:ring-red-500 focus:border-red-500': !!errors.repository,
-                }
-              )}
-              id="repository"
-              type="text"
-              name="repository"
-              defaultValue="tobkle/klemmer.info"
-              ref={register({ required: true })}
-              placeholder="maintainer/repository-name"
-            />
-            {errors.repository && (
-              <div className="text-red-500 text-sm">
-                {errors.repository?.message}
-              </div>
-            )}
-          </div>
-        </div>
-
-        <button
-          type="submit"
-          disabled={!true}
-          className={cn('text-gray-50 px-6 py-2 mt-8 w-full rounded shadow', {
-            'bg-indigo-600  hover:bg-indigo-400': true,
-            'bg-gray-200': !true,
-          })}
-        >
-          Create
-        </button>
-      </form>
-    </div>
+      <Button
+        type="submit"
+        variant="primary"
+        className="w-full"
+        disabled={Object.keys(errors).length !== 0}
+      >
+        Create
+      </Button>
+    </Form>
   )
 }
 
 export default CreateSite
+
+export const getStaticProps: GetStaticProps = async () => {
+  const sites = await fetcher(URL_SITE_LIST)
+  return { props: { sites } }
+}

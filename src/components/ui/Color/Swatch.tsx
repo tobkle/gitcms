@@ -1,6 +1,6 @@
 import React from 'react'
 import cn from 'classnames'
-import { theme } from './../../../../tailwind.config'
+import { theme } from '../../../../tailwind.config'
 const { colors } = theme
 
 /* TODO: Don't know how to get a new type out of an Array of string literals

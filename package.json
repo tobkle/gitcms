@@ -16,7 +16,7 @@
     "start": "next start",
     "lint": "eslint --ext .ts,.tsx",
     "lint:fix": "eslint --ext .ts,.tsx --fix",
-    "lint:fix:style": "npx stylelint '**/*.css' --fix",
+    "lint:fix:style": "npx stylelint 'src/**/*.css' --fix",
     "storybook": "start-storybook -p 6006",
     "build-storybook": "build-storybook"
   },

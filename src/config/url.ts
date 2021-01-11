@@ -1,0 +1,5 @@
+export const URL_SITE_CREATE = '/api/site/create'
+export const URL_SITE_ID = '/api/site'
+export const URL_SITE_LIST = '/api/site/'
+export const URL_SITE_MAINTAINER = '/api/site/maintainer'
+export const URL_SITE_INVITE = '/api/site/invite'

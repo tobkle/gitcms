@@ -1,33 +1,33 @@
-import nodemailer from 'nodemailer';
-import VerificationRequestParams from 'next-auth';
+import nodemailer from 'nodemailer'
+import VerificationRequestParams from 'next-auth'
 
 interface VerificationRequestParams {
-  identifier: string;
-  url: string;
-  baseUrl: string;
-  token: string;
-  provider: ProviderEmailOptions;
+  identifier: string
+  url: string
+  baseUrl: string
+  token: string
+  provider: ProviderEmailOptions
 }
 
 interface ProviderEmailOptions {
-  name?: string;
-  server?: string | ProviderEmailServer;
-  from?: string;
-  maxAge?: number;
+  name?: string
+  server?: string | ProviderEmailServer
+  from?: string
+  maxAge?: number
   sendVerificationRequest?: (
     options: VerificationRequestParams
-  ) => Promise<void>;
+  ) => Promise<void>
 }
 
 interface ProviderEmailServer {
-  host: string;
-  port: number;
-  auth: ProviderEmailAuth;
+  host: string
+  port: number
+  auth: ProviderEmailAuth
 }
 
 interface ProviderEmailAuth {
-  user: string;
-  pass: string;
+  user: string
+  pass: string
 }
 
 export const sendVerificationRequest = ({
@@ -39,9 +39,9 @@ export const sendVerificationRequest = ({
   provider,
 }: VerificationRequestParams): Promise<void> => {
   return new Promise((resolve, reject) => {
-    const { server, from } = provider;
+    const { server, from } = provider
     // Strip protocol from URL and use domain as site name
-    const site = baseUrl.replace(/^https?:\/\//, '');
+    const site = baseUrl.replace(/^https?:\/\//, '')
 
     nodemailer.createTransport(server).sendMail(
       {
@@ -53,14 +53,14 @@ export const sendVerificationRequest = ({
       },
       (error) => {
         if (error) {
-          console.error('SEND_VERIFICATION_EMAIL_ERROR', email, error);
-          return reject(new Error('SEND_VERIFICATION_EMAIL_ERROR ' + error));
+          console.error('SEND_VERIFICATION_EMAIL_ERROR', email, error)
+          return reject(new Error('SEND_VERIFICATION_EMAIL_ERROR ' + error))
         }
-        return resolve();
+        return resolve()
       }
-    );
-  });
-};
+    )
+  })
+}
 
 // => https://mjml.io
 // Email HTML body
@@ -69,16 +69,16 @@ const html = ({ url, site, email }) => {
   // email address and the domain from being turned into a hyperlink by email
   // clients like Outlook and Apple mail, as this is confusing because it seems
   // like they are supposed to click on their email address to sign in.
-  const escapedEmail = `${email.replace(/\./g, '&#8203;.')}`;
-  const escapedSite = `${site.replace(/\./g, '&#8203;.')}`;
+  const escapedEmail = `${email.replace(/\./g, '&#8203;.')}`
+  const escapedSite = `${site.replace(/\./g, '&#8203;.')}`
 
   // Some simple styling options
-  const backgroundColor = '#f9f9f9';
-  const textColor = '#444444';
-  const mainBackgroundColor = '#ffffff';
-  const buttonBackgroundColor = '#346df1';
-  const buttonBorderColor = '#346df1';
-  const buttonTextColor = '#ffffff';
+  const backgroundColor = '#f9f9f9'
+  const textColor = '#444444'
+  const mainBackgroundColor = '#ffffff'
+  const buttonBackgroundColor = '#346df1'
+  const buttonBorderColor = '#346df1'
+  const buttonTextColor = '#ffffff'
 
   // Uses tables for layout and inline CSS due to email client limitations
   return `
@@ -112,8 +112,8 @@ const html = ({ url, site, email }) => {
     </tr>
   </table>
 </body>
-`;
-};
+`
+}
 
 // Email text body – fallback for email clients that don't render HTML
-const text = ({ url, site }) => `Sign in to ${site}\n${url}\n\n`;
+const text = ({ url, site }) => `Sign in to ${site}\n${url}\n\n`

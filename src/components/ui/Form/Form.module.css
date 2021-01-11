@@ -1,0 +1,11 @@
+.container {
+  @apply mx-auto max-w-2xl bg-white mb-8 p-8 border-2 border-primary-500 rounded-md shadow-lg;
+}
+
+.form {
+  @apply mt-6 grid grid-cols-12 gap-6;
+}
+
+.h1 {
+  @apply col-span-12 text-2xl text-primary-600 font-bold;
+}

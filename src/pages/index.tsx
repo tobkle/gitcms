@@ -1,5 +1,5 @@
 import React from 'react'
-import Button from 'components/ui/Buttons'
+import Button from 'components/ui/Button'
 
 const IndexPage: React.FC = () => {
   return (

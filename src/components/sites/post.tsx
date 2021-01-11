@@ -2,8 +2,14 @@ import { useSession } from 'hooks/use-session'
 import { useState, useEffect } from 'react'
 import { useMutation } from 'react-query'
 import { getSlug } from 'lib/helpers'
+import { Site } from '@prisma/client'
 
-export default function Post(): JSX.Element {
+interface PostProps {
+  site?: Site
+}
+
+const Post: React.FC<PostProps> = (props): JSX.Element => {
+  const { site } = props
   const [session, loading] = useSession()
   const [title, setTitle] = useState('')
   const [content, setContent] = useState('')
@@ -92,3 +98,5 @@ export default function Post(): JSX.Element {
     </form>
   )
 }
+
+export default Post

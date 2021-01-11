@@ -9,7 +9,8 @@ import { useButton } from 'react-aria'
 import MailIcon from 'components/icons/mail'
 import cn from 'classnames'
 import s from './Button.module.css'
-import LoadingDots from 'components/ui/LoadingDots'
+// import LoadingDots from 'components/ui/LoadingDots'
+import Spinner from 'components/icons/spinner'
 import PlusIcon from 'components/icons/plus'
 
 export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
@@ -21,6 +22,7 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   active?: boolean
   loading?: boolean
   disabled?: boolean
+  icon?: string
   width?: string | number
 }
 
@@ -35,6 +37,7 @@ const Button: React.FC<ButtonProps> = forwardRef((props, buttonRef) => {
     className = '',
     loading = false,
     disabled = false,
+    icon = '',
     width,
     style = {},
     children,
@@ -71,9 +74,8 @@ const Button: React.FC<ButtonProps> = forwardRef((props, buttonRef) => {
     },
     className
   )
-  console.log('rootClassName', rootClassName, s)
   return (
-    <div>
+    <div className={s.inputBlock}>
       <Component
         aria-pressed={active}
         ref={mergeRefs([ref, buttonRef])}
@@ -82,20 +84,22 @@ const Button: React.FC<ButtonProps> = forwardRef((props, buttonRef) => {
         type={type}
         data-variant={variant}
         className={rootClassName}
-        // data-active={isPressed ? '' : undefined}
+        data-active={isPressed ? '' : undefined}
         style={{
           width,
           ...style,
         }}
       >
-        {variant !== 'circular' && <MailIcon />}
-        {variant !== 'circular' && children}
-        {variant === 'circular' && <PlusIcon />}
-        {loading && (
-          <i className="pl-2 m-0 flex">
-            <LoadingDots />
-          </i>
-        )}
+        <div className="mx-auto">
+          {variant !== 'circular' && !!icon && <MailIcon />}
+          {variant !== 'circular' && children}
+          {variant === 'circular' && <PlusIcon />}
+          {loading && (
+            <i className="pl-2 m-0 flex">
+              <Spinner />
+            </i>
+          )}
+        </div>
       </Component>
     </div>
   )
