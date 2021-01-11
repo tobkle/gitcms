@@ -3,99 +3,126 @@ import { useState, useEffect } from 'react'
 import { useMutation } from 'react-query'
 import { getSlug } from 'lib/helpers'
 import { Site } from '@prisma/client'
+import { useForm } from 'react-hook-form'
+import { post } from 'lib/fetch'
+import { yupResolver } from '@hookform/resolvers/dist/umd'
+import * as yup from 'yup'
+import Form from 'components/ui/Form'
+import Input from 'components/ui/Input'
+import Button from 'components/ui/Button'
+import { URL_SITE_POST_UPDATE } from 'config/url'
 
 interface PostProps {
   site?: Site
 }
 
+interface FormObject {
+  siteId: number
+  title: string
+  slug: string
+  content: string
+  suffix: string
+  path: string
+}
+
+const schema = yup.object().shape({
+  siteId: yup.number().required(),
+  title: yup.string().trim().required(),
+  slug: yup.string().trim().lowercase().required(),
+  content: yup.string(),
+  suffix: yup.string().required(),
+  path: yup.string().required(),
+})
+
 const Post: React.FC<PostProps> = (props): JSX.Element => {
   const { site } = props
   const [session, loading] = useSession()
-  const [title, setTitle] = useState('')
-  const [content, setContent] = useState('')
-  const [slug, setSlug] = useState(getSlug(title))
-  const [manuallyUpdatedSlug, setManuallyUpdatedSlug] = useState(false)
 
-  // if filename was changed by user once, remember that
-  const updateSlug = (newSlug) => {
-    setManuallyUpdatedSlug(true)
-    setSlug(getSlug(newSlug))
-  }
+  const { register, handleSubmit, errors } = useForm<FormObject>({
+    defaultValues: {
+      siteId: site.id,
+      title: '',
+      slug: '',
+      content: '',
+      suffix: 'md',
+      path: 'posts',
+    },
+    resolver: yupResolver(schema),
+  })
 
-  // adjust filename according to title, if user hasn't provided a manual filename
-  useEffect(() => {
-    if (manuallyUpdatedSlug) return null
-    setSlug(getSlug(title))
-  }, [title, manuallyUpdatedSlug])
-
-  const { mutate, isLoading, isError, error, isSuccess } = useMutation(
-    (newPost) =>
-      fetch('/api/github/publish', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(newPost),
-        credentials: 'include',
+  const onSubmit = async ({ siteId, title, slug, content, suffix, path }) => {
+    try {
+      const response = await post(URL_SITE_POST_UPDATE, {
+        siteId,
+        title,
+        slug: getSlug(slug),
+        content,
+        suffix,
+        path,
       })
-  )
-
-  const onSubmit = (e) => {
-    e.preventDefault()
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    mutate({ title, content, slug, path: 'posts', suffix: '.yml' })
+      console.log('Post published:', response)
+    } catch (error) {
+      console.error(error)
+    }
   }
 
-  if (loading || isLoading) return <div>Loading...</div>
-  if (!session) return <div></div>
-  if (isError) return <div>{error}</div>
-  if (isSuccess) <div>Article is saved</div>
+  if (loading) return <div>Loading...</div>
+  if (!session) return null
 
   return (
-    <form
-      className="mx-auto max-w-2xl  bg-white mb-8 p-8 border-2 border-indigo-500 rounded-md shadow-lg"
-      onSubmit={onSubmit}
-    >
-      <h1 className="text-2xl text-indigo-600 font-bold mb-4">Edit Article</h1>
-
-      <label className="flex flex-col mb-4 text-gray-400" htmlFor="title">
-        Title
-        <input
-          className="bg-gray-100 px-3 py-1 my-3 rounded shadow border-2 border-gray-200"
-          id="title"
-          type="text"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-        />
-      </label>
-
-      <label className="flex flex-col mb-4 text-gray-400" htmlFor="slug">
-        Slug
-        <input
-          className="bg-gray-100 px-3 py-1 my-3 rounded shadow border-2 border-gray-200"
-          id="slug"
-          type="text"
-          value={slug}
-          onChange={(e) => updateSlug(e.target.value)}
-        />
-      </label>
-
-      <label className="flex flex-col mb-4 text-gray-400" htmlFor="title">
-        Content
-        <textarea
-          className="bg-gray-100 px-3 py-1 my-3 rounded shadow border-2 border-gray-200 "
-          id="content"
-          value={content}
-          onChange={(e) => setContent(e.target.value)}
-        />
-      </label>
-
-      <button
-        className="bg-indigo-600 text-gray-50 px-6 py-2 mt-8 w-full rounded shadow hover:bg-indigo-400"
-        type="submit"
-      >
+    <Form onSubmit={handleSubmit(onSubmit)} h1="Edit Post">
+      <Input
+        ref={register({ required: true })}
+        type="hidden"
+        name="siteId"
+        label="siteId"
+        placeholder="siteId"
+        errors={errors['siteId']}
+      />
+      <Input
+        ref={register({ required: true })}
+        type="hidden"
+        name="suffix"
+        label="suffix"
+        placeholder="suffix"
+        errors={errors['suffix']}
+      />
+      <Input
+        ref={register({ required: true })}
+        type="hidden"
+        name="path"
+        label="path"
+        placeholder="path"
+        errors={errors['path']}
+      />
+      <Input
+        ref={register({ required: true })}
+        type="text"
+        name="title"
+        label="Title"
+        placeholder="title"
+        errors={errors['title']}
+      />
+      <Input
+        ref={register({ required: true })}
+        type="text"
+        name="slug"
+        label="Slug"
+        placeholder="slug"
+        errors={errors['slug']}
+      />
+      <Input
+        ref={register({ required: true })}
+        type="Textarea"
+        name="content"
+        label="Content"
+        placeholder="content"
+        errors={errors['content']}
+      />
+      <Button type="submit" variant="primary" className="w-full mt-4">
         Publish
-      </button>
-    </form>
+      </Button>
+    </Form>
   )
 }
 
