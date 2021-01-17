@@ -23,19 +23,33 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
       label,
       errors,
       type,
+      disabled,
       ...rest
     } = props
+
+    const containerClass = cn({
+      [s.inputBlock_Checkbox]: type === 'checkbox',
+      [s.inputBlock]: type !== 'checkbox',
+    })
+
     const rootClassName = cn(
       s.root,
       {
         [s.rootError]: !!errors,
+        'bg-gray-100': disabled === true,
       },
       className
     )
     return (
-      <div className={s.inputBlock}>
+      <div className={containerClass}>
         {type !== 'hidden' && (
-          <label className={s.label} htmlFor={name}>
+          <label
+            className={cn({
+              [s.label]: type !== 'checkbox',
+              [s.label_Checkbox]: type === 'checkbox',
+            })}
+            htmlFor={name}
+          >
             {label}
           </label>
         )}
@@ -45,11 +59,13 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
           name={name}
           type={type}
           className={rootClassName}
+          tabIndex="0"
           ref={inputRef}
           autoComplete="off"
           autoCorrect="off"
           autoCapitalize="off"
           spellCheck="false"
+          disabled={disabled}
           {...rest}
         />
 

@@ -15,7 +15,7 @@ export default async function apiSite(
   try {
     const { id } = req.query
     if (!id) throw new Error('Please provide site id')
-    const siteId = Number(id)
+    const siteId = Math.floor(Number(id))
 
     await getAuthenticatedUser(req, res)
 

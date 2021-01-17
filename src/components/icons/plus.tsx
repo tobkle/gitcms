@@ -1,8 +1,7 @@
 import React from 'react'
+import { SVGProps } from 'types'
 
-const PlusIcon: React.FC = (
-  props: React.SVGProps<SVGSVGElement>
-): JSX.Element => {
+const PlusIcon: React.FC<SVGProps> = (props: SVGProps): JSX.Element => {
   return (
     <svg
       className="h-5 w-5"

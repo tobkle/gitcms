@@ -4,5 +4,16 @@
       "path": "."
     }
   ],
-  "settings": {}
+  "settings": {
+    "favorites.resources": [
+      "src/components/content-type/content-type.tsx",
+      "src/components/content-type/add-field.tsx",
+      "src/pages/site/[siteId]/type/[contentTypeId].tsx",
+      "src/pages/api/github/contenttype/create.ts",
+      "src/pages/api/github/contenttype/define.ts",
+      "src/pages/api/github/contenttype/single.ts",
+      "src/pages/api/github/contenttype/index.ts",
+      "src/types.ts"
+    ]
+  }
 }

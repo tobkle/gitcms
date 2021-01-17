@@ -1,8 +1,7 @@
 import React from 'react'
+import { SVGProps } from 'types'
 
-const MailIcon: React.FC = (
-  props: React.SVGProps<SVGSVGElement>
-): JSX.Element => {
+const MailIcon: React.FC<SVGProps> = (props: SVGProps): JSX.Element => {
   return (
     <svg
       className="-ml-1 mr-3 h-5 w-5"
